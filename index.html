@@ -1,0 +1,650 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speak Up! English Pronunciation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;800&display=swap');
+
+:root{
+  --purple:#7764db;
+  --light:#f3f0ff;
+  --pink:#ff8eae;
+  --green:#35b991;
+  --dark:#292943;
+  --muted:#88889d;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:#f7f7fc;color:var(--dark);
+  font-family:'Nunito','Noto Sans KR',sans-serif;
+}
+button{font-family:inherit;cursor:pointer;border:0}
+.container{max-width:900px;margin:auto;padding:25px 20px 60px}
+
+header{
+  background:linear-gradient(130deg,#7867dc,#a18be9);
+  color:white;border-radius:25px;padding:27px 30px;
+  position:relative;overflow:hidden;
+}
+header:after{
+  content:"🎤";position:absolute;right:35px;top:20px;
+  font-size:85px;opacity:.2;
+}
+.logo{font-size:14px;font-weight:900;letter-spacing:2px}
+header h1{font-size:32px;margin:12px 0 5px;font-weight:900}
+header p{margin:0;font-size:14px;opacity:.9}
+
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin:18px 0;
+}
+.stat{
+  background:white;border-radius:17px;padding:15px;
+  text-align:center;box-shadow:0 3px 12px #29294308;
+}
+.stat strong{display:block;font-size:25px;color:var(--purple)}
+.stat span{font-size:12px;color:var(--muted)}
+
+.tabs{display:flex;gap:9px;overflow-x:auto;margin:20px 0}
+.tab{
+  background:white;color:#77758c;padding:11px 17px;
+  border-radius:13px;font-weight:800;white-space:nowrap;
+}
+.tab.active{background:var(--purple);color:white}
+
+.panel{
+  background:white;border-radius:22px;padding:24px;
+  box-shadow:0 4px 18px #29294308;margin-bottom:18px;
+}
+.section-title{font-size:19px;font-weight:900;margin:0 0 5px}
+.sub{font-size:13px;color:var(--muted);margin:0 0 18px}
+
+.levels{display:flex;gap:8px;margin-bottom:20px}
+.level{
+  flex:1;padding:10px;border-radius:11px;
+  background:#f3f2f8;color:#77758c;font-weight:800;
+}
+.level.active{background:#eae5ff;color:var(--purple)}
+
+.question-card{
+  background:linear-gradient(140deg,#f5f2ff,#fff3f7);
+  border-radius:20px;text-align:center;padding:24px 15px;
+}
+
+/* 그림 영역 */
+.picture-area{
+  width:190px;height:170px;margin:0 auto 17px;
+  background:white;border-radius:25px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 18px #7764db13;
+  position:relative;overflow:hidden;
+}
+.picture-emoji{
+  font-size:100px;
+  line-height:1;
+  filter:drop-shadow(0 6px 5px #00000010);
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-7px)}
+}
+.picture-caption{
+  position:absolute;bottom:9px;
+  font-size:11px;font-weight:800;color:#a19bb8;
+  letter-spacing:1px;
+}
+.category{
+  font-size:12px;color:var(--purple);font-weight:900;
+  letter-spacing:1px;
+}
+.target{
+  font-size:34px;font-weight:900;margin:12px 0 5px;
+  word-break:break-word;
+}
+.meaning{font-size:15px;color:#858398}
+.phonetic{font-size:15px;color:var(--purple);margin-top:9px}
+
+.audio-buttons{
+  display:flex;justify-content:center;gap:10px;margin-top:20px;
+}
+.audio-btn{
+  background:white;color:var(--purple);
+  border:1px solid #e8e3ff;
+  padding:11px 18px;border-radius:13px;font-weight:800;
+}
+.audio-btn:hover{background:#f0edff}
+
+.record-area{text-align:center;padding:22px 0 5px}
+.mic{
+  width:78px;height:78px;border-radius:50%;
+  background:var(--purple);color:white;font-size:31px;
+  box-shadow:0 7px 18px #7764db55;transition:.2s;
+}
+.mic.recording{
+  background:#ed6488;
+  animation:pulse 1s infinite;
+}
+@keyframes pulse{
+  50%{box-shadow:0 0 0 14px #ed648822}
+}
+.record-label{font-size:14px;font-weight:800;margin:12px 0 5px}
+.record-hint{font-size:12px;color:var(--muted)}
+
+.result{
+  background:#f8f7fc;border-radius:16px;
+  padding:17px;margin-top:17px;display:none;text-align:left;
+}
+.result.show{display:block}
+.result-heading{font-weight:900;margin-bottom:9px}
+.recognized{font-size:16px;line-height:1.8}
+.score{
+  font-size:35px;font-weight:900;
+  color:var(--purple);text-align:center;margin:10px 0;
+}
+.feedback{text-align:center;font-size:14px;font-weight:800}
+.progress-bar{
+  height:9px;background:#eceaf3;
+  border-radius:20px;overflow:hidden;margin:12px 0;
+}
+.progress-fill{
+  height:100%;background:var(--green);
+  width:0%;transition:.3s;
+}
+.tip{
+  background:#fff7e9;padding:15px;border-radius:14px;
+  font-size:13px;line-height:1.8;color:#80673d;margin-top:16px;
+}
+.actions{display:flex;gap:10px;margin-top:17px}
+.primary,.secondary{
+  flex:1;padding:14px;border-radius:13px;
+  font-size:14px;font-weight:900;
+}
+.primary{background:var(--purple);color:white}
+.secondary{background:#f0edff;color:var(--purple)}
+
+.word-list{display:grid;gap:11px}
+.word-item{
+  padding:12px;border-radius:15px;background:#faf9fd;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.word-left{display:flex;align-items:center;gap:13px;min-width:0}
+.word-picture{
+  width:65px;height:65px;flex-shrink:0;
+  border-radius:14px;background:#f0edff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+}
+.word-info{min-width:0}
+.word-info strong{font-size:15px;display:block;overflow-wrap:anywhere}
+.word-info small{display:block;color:var(--muted);margin-top:4px}
+.word-item button{
+  background:#eeeaff;color:var(--purple);
+  border-radius:10px;padding:9px 12px;font-weight:800;
+  flex-shrink:0;
+}
+.sentence-picture{
+  width:100%;height:125px;border-radius:15px;
+  background:linear-gradient(120deg,#f3efff,#fff1f5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:65px;margin-bottom:10px;
+}
+.hidden{display:none}
+footer{text-align:center;color:#aaa;font-size:12px;margin-top:25px}
+
+@media(max-width:550px){
+ .container{padding:15px 12px 40px}
+ header{padding:23px 20px}
+ header h1{font-size:26px}
+ header:after{font-size:60px;right:15px;top:35px}
+ .panel{padding:17px}
+ .target{font-size:27px}
+ .picture-area{width:160px;height:145px}
+ .picture-emoji{font-size:85px}
+ .stats{gap:7px}
+ .stat{padding:12px 5px}
+ .actions{flex-direction:column}
+ .word-picture{width:55px;height:55px;font-size:30px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">✨ SPEAK UP! ENGLISH</div>
+  <h1>Let's Practice Speaking!</h1>
+  <p>Look, Listen, Speak, and Improve Your Pronunciation!</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><strong id="total">0</strong><span>연습 횟수</span></div>
+  <div class="stat"><strong id="average">0%</strong><span>평균 정확도</span></div>
+  <div class="stat"><strong id="best">0%</strong><span>최고 정확도</span></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-page="practice">🎤 발음 연습</button>
+  <button class="tab" data-page="words">📚 단어 연습</button>
+  <button class="tab" data-page="sentences">💬 문장 연습</button>
+</div>
+
+<section id="practice">
+<div class="panel">
+
+<h2 class="section-title">🎯 Today's Practice</h2>
+<p class="sub">그림을 보고 단어의 의미를 이해한 다음 발음해 보세요!</p>
+
+<div class="levels">
+  <button class="level active" data-level="easy">Easy</button>
+  <button class="level" data-level="medium">Medium</button>
+  <button class="level" data-level="hard">Hard</button>
+</div>
+
+<div class="question-card">
+
+  <div class="category" id="category">WORD PRACTICE</div>
+
+  <div class="picture-area">
+    <div class="picture-emoji" id="picture">🍎</div>
+    <div class="picture-caption">LOOK & LEARN</div>
+  </div>
+
+  <div class="target" id="target">Apple</div>
+  <div class="meaning" id="meaning">사과</div>
+  <div class="phonetic" id="phonetic">/ˈæp.əl/</div>
+
+  <div class="audio-buttons">
+    <button class="audio-btn" onclick="speakTarget(0.8)">🐢 천천히 듣기</button>
+    <button class="audio-btn" onclick="speakTarget(1)">🔊 보통 속도</button>
+  </div>
+</div>
+
+<div class="record-area">
+  <button class="mic" id="mic" onclick="toggleRecording()">🎙️</button>
+  <div class="record-label" id="recordLabel">마이크를 누르고 발음해 보세요!</div>
+  <div class="record-hint">영어로 말한 후 마이크 버튼을 다시 누르면 종료됩니다.</div>
+</div>
+
+<div class="result" id="result">
+  <div class="result-heading">📝 나의 발음 결과</div>
+  <div class="recognized" id="recognized"></div>
+  <div class="score" id="score">0%</div>
+  <div class="feedback" id="feedback"></div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+  <div class="tip" id="tip"></div>
+</div>
+
+<div class="actions">
+  <button class="secondary" onclick="resetPractice()">↻ 다시 연습하기</button>
+  <button class="primary" onclick="nextQuestion()">다음 문제 →</button>
+</div>
+
+</div>
+
+<div class="panel">
+  <h3 class="section-title">💡 Pronunciation Tips</h3>
+  <p class="sub">영어 발음을 더 자연스럽게 만드는 방법</p>
+  <div class="tip">
+    <strong>1. Look carefully</strong><br>
+    그림을 보며 단어의 의미를 먼저 생각해 보세요.<br>
+    <strong>2. Listen carefully</strong><br>
+    원어민의 발음을 주의 깊게 들어보세요.<br>
+    <strong>3. Pay attention to stress</strong><br>
+    강세와 소리에 집중하면서 따라 말해 보세요.
+  </div>
+</div>
+</section>
+
+<section id="words" class="hidden">
+<div class="panel">
+  <h2 class="section-title">📚 Word Practice</h2>
+  <p class="sub">그림과 단어를 연결하고 발음을 들어보세요.</p>
+  <div class="word-list" id="wordList"></div>
+</div>
+</section>
+
+<section id="sentences" class="hidden">
+<div class="panel">
+  <h2 class="section-title">💬 Sentence Practice</h2>
+  <p class="sub">그림 속 상황을 생각하며 문장을 연습해 보세요.</p>
+  <div class="word-list" id="sentenceList"></div>
+</div>
+</section>
+
+<footer>Speak Up! · English Pronunciation Practice</footer>
+</div>
+
+<script>
+const exercises = {
+ easy: [
+  {text:"Apple",meaning:"사과",ipa:"/ˈæp.əl/",emoji:"🍎",type:"WORD"},
+  {text:"Beautiful",meaning:"아름다운",ipa:"/ˈbjuː.tɪ.fəl/",emoji:"🌸",type:"WORD"},
+  {text:"School",meaning:"학교",ipa:"/skuːl/",emoji:"🏫",type:"WORD"},
+  {text:"Happy",meaning:"행복한",ipa:"/ˈhæp.i/",emoji:"😊",type:"WORD"},
+  {text:"Water",meaning:"물",ipa:"/ˈwɔː.t̬ɚ/",emoji:"💧",type:"WORD"},
+  {text:"I like English.",meaning:"나는 영어를 좋아해.",ipa:"/aɪ laɪk ˈɪŋ.ɡlɪʃ/",emoji:"📖",type:"SENTENCE"},
+  {text:"How are you today?",meaning:"오늘 기분이 어때?",ipa:"/haʊ ɑːr juː təˈdeɪ/",emoji:"👋",type:"SENTENCE"}
+ ],
+ medium: [
+  {text:"Interesting",meaning:"흥미로운",ipa:"/ˈɪn.trə.stɪŋ/",emoji:"🔭",type:"WORD"},
+  {text:"Vegetable",meaning:"채소",ipa:"/ˈvedʒ.tə.bəl/",emoji:"🥦",type:"WORD"},
+  {text:"Comfortable",meaning:"편안한",ipa:"/ˈkʌm.fɚ.t̬ə.bəl/",emoji:"🛋️",type:"WORD"},
+  {text:"Different",meaning:"다른",ipa:"/ˈdɪf.ɚ.ənt/",emoji:"🎨",type:"WORD"},
+  {text:"Yesterday",meaning:"어제",ipa:"/ˈjes.tɚ.deɪ/",emoji:"🌅",type:"WORD"},
+  {text:"I want to improve my English.",meaning:"나는 영어 실력을 향상시키고 싶어.",ipa:"/aɪ wɑːnt tə ɪmˈpruːv maɪ ˈɪŋ.ɡlɪʃ/",emoji:"📚",type:"SENTENCE"},
+  {text:"Could you speak more slowly?",meaning:"좀 더 천천히 말해 주시겠어요?",ipa:"/kʊd juː spiːk mɔːr ˈsloʊ.li/",emoji:"🐢",type:"SENTENCE"}
+ ],
+ hard: [
+  {text:"Pronunciation",meaning:"발음",ipa:"/prəˌnʌn.siˈeɪ.ʃən/",emoji:"🎤",type:"WORD"},
+  {text:"Opportunity",meaning:"기회",ipa:"/ˌɑː.pɚˈtuː.nə.t̬i/",emoji:"🚪",type:"WORD"},
+  {text:"Environment",meaning:"환경",ipa:"/ɪnˈvaɪ.rən.mənt/",emoji:"🌳",type:"WORD"},
+  {text:"Particularly",meaning:"특히",ipa:"/pɚˈtɪk.jə.lɚ.li/",emoji:"⭐",type:"WORD"},
+  {text:"Thoughtful",meaning:"사려 깊은",ipa:"/ˈθɔːt.fəl/",emoji:"💝",type:"WORD"},
+  {text:"I believe practice makes perfect.",meaning:"연습이 완벽을 만든다고 생각해.",ipa:"/aɪ bɪˈliːv ˈpræk.tɪs meɪks ˈpɝː.fɪkt/",emoji:"🏆",type:"SENTENCE"},
+  {text:"The more you practice, the better you become.",meaning:"연습할수록 더 잘하게 돼.",ipa:"/ðə mɔːr juː ˈpræk.tɪs ðə ˈbet̬.ɚ juː bɪˈkʌm/",emoji:"📈",type:"SENTENCE"}
+ ]
+};
+
+let level="easy";
+let index=0;
+let current=exercises.easy[0];
+let recognition=null;
+let recording=false;
+let attempts=[];
+let best=0;
+let lastTranscript="";
+let selectedVoice=null;
+
+function getVoice(){
+ const voices=speechSynthesis.getVoices();
+ selectedVoice=voices.find(v=>v.lang==="en-US") ||
+ voices.find(v=>v.lang.startsWith("en")) || null;
+}
+if("speechSynthesis" in window){
+ speechSynthesis.onvoiceschanged=getVoice;
+ getVoice();
+}
+
+function speak(text,rate=1){
+ if(!("speechSynthesis" in window)){
+  alert("이 브라우저는 음성 재생을 지원하지 않습니다.");
+  return;
+ }
+ speechSynthesis.cancel();
+ const utterance=new SpeechSynthesisUtterance(text);
+ utterance.lang="en-US";
+ utterance.rate=rate;
+ if(selectedVoice) utterance.voice=selectedVoice;
+ speechSynthesis.speak(utterance);
+}
+
+function speakTarget(rate){
+ speak(current.text,rate);
+}
+
+function updateQuestion(){
+ current=exercises[level][index%exercises[level].length];
+
+ document.getElementById("target").textContent=current.text;
+ document.getElementById("meaning").textContent=current.meaning;
+ document.getElementById("phonetic").textContent=current.ipa;
+ document.getElementById("picture").textContent=current.emoji;
+
+ document.getElementById("category").textContent=
+  current.type==="WORD"?"WORD PRACTICE":"SENTENCE PRACTICE";
+
+ resetPractice();
+}
+
+document.querySelectorAll(".level").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  level=btn.dataset.level;
+  index=0;
+  document.querySelectorAll(".level").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  updateQuestion();
+ });
+});
+
+document.querySelectorAll(".tab").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+
+  ["practice","words","sentences"].forEach(id=>{
+   document.getElementById(id).classList.toggle(
+    "hidden",id!==btn.dataset.page
+   );
+  });
+ });
+
+});
+
+function normalize(s){
+ return s.toLowerCase()
+ .replace(/[.,!?;:'"’]/g,"")
+ .replace(/\s+/g," ").trim();
+}
+
+function compareWords(target,spoken){
+ const a=normalize(target).split(" ").filter(Boolean);
+ const b=normalize(spoken).split(" ").filter(Boolean);
+ let matched=0;
+ const details=[];
+ let used=new Set();
+
+ a.forEach(word=>{
+  let found=-1;
+  for(let i=0;i<b.length;i++){
+   if(!used.has(i)&&b[i]===word){
+    found=i;
+    break;
+   }
+  }
+  if(found>=0){
+   matched++;
+   used.add(found);
+   details.push({word,ok:true});
+  }else{
+   details.push({word,ok:false});
+  }
+ });
+
+ return {
+  accuracy:a.length?Math.round(matched/a.length*100):0,
+  details
+ };
+}
+
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+ }[c]));
+}
+
+function displayResult(transcript){
+ lastTranscript=transcript;
+ const comparison=compareWords(current.text,transcript);
+ const accuracy=comparison.accuracy;
+
+ document.getElementById("result").classList.add("show");
+ document.getElementById("recognized").innerHTML=
+  "<strong>내가 말한 내용:</strong><br>"+escapeHTML(transcript);
+
+ document.getElementById("score").textContent=accuracy+"%";
+ document.getElementById("progress").style.width=accuracy+"%";
+
+ let message=accuracy===100?
+  "🎉 훌륭해요! 모든 단어를 인식했어요!":
+  accuracy>=70?
+  "👏 잘했어요! 조금 더 연습해 볼까요?":
+  accuracy>=40?
+  "💪 좋아요! 다시 듣고 천천히 말해 보세요.":
+  "🌱 괜찮아요! 원어민 발음을 다시 들어보세요.";
+
+ document.getElementById("feedback").textContent=message;
+
+ const missing=comparison.details
+  .filter(x=>!x.ok).map(x=>x.word);
+
+ document.getElementById("tip").innerHTML=
+  "<strong>확인할 부분</strong><br>"+
+  (missing.length?
+  "인식되지 않은 단어: "+missing.map(escapeHTML).join(", "):
+  "모든 단어가 인식되었어요! 계속 연습해 보세요.")+
+  "<br><br>※ 이 점수는 음성 인식 결과의 단어 일치율입니다. 실제 발음의 음소 정확도를 측정하는 점수는 아닙니다.";
+
+ attempts.push(accuracy);
+ best=Math.max(best,accuracy);
+ updateStats();
+}
+
+function toggleRecording(){
+ if(recording){
+  recognition.stop();
+  return;
+ }
+
+ if(!("webkitSpeechRecognition" in window ||
+      "SpeechRecognition" in window)){
+  alert("이 브라우저에서는 음성 인식을 지원하지 않습니다. 최신 Chrome을 사용해 주세요.");
+  return;
+ }
+
+ const SpeechRecognition=window.SpeechRecognition ||
+ window.webkitSpeechRecognition;
+
+ recognition=new SpeechRecognition();
+ recognition.lang="en-US";
+ recognition.continuous=false;
+ recognition.interimResults=true;
+ recognition.maxAlternatives=1;
+
+ let finalText="";
+
+ recording=true;
+ document.getElementById("mic").classList.add("recording");
+ document.getElementById("recordLabel").textContent=
+  "🎙️ 듣고 있어요... 영어로 말해 보세요!";
+
+ recognition.onresult=(event)=>{
+  let interim="";
+  for(let i=event.resultIndex;i<event.results.length;i++){
+   if(event.results[i].isFinal){
+    finalText+=event.results[i][0].transcript+" ";
+   }else{
+    interim+=event.results[i][0].transcript;
+   }
+  }
+  document.getElementById("recordLabel").textContent=
+   finalText+interim || "듣고 있어요...";
+ };
+
+ recognition.onerror=(event)=>{
+  if(event.error!=="no-speech"&&event.error!=="aborted"){
+   document.getElementById("recordLabel").textContent=
+    "음성 인식 오류: "+event.error;
+  }
+ };
+
+ recognition.onend=()=>{
+  recording=false;
+  document.getElementById("mic").classList.remove("recording");
+  document.getElementById("recordLabel").textContent=
+   "마이크를 누르고 발음해 보세요!";
+
+  if(finalText.trim()){
+   displayResult(finalText.trim());
+  }else if(!lastTranscript){
+   document.getElementById("recordLabel").textContent=
+    "음성이 인식되지 않았어요. 다시 시도해 주세요.";
+  }
+ };
+
+ try{
+  recognition.start();
+ }catch(e){
+  recording=false;
+  document.getElementById("mic").classList.remove("recording");
+  alert("마이크를 시작할 수 없습니다. 다시 시도해 주세요.");
+ }
+}
+
+function resetPractice(){
+ if(recording&&recognition){
+  recognition.abort();
+  recording=false;
+ }
+ lastTranscript="";
+ document.getElementById("mic").classList.remove("recording");
+ document.getElementById("recordLabel").textContent=
+  "마이크를 누르고 발음해 보세요!";
+ document.getElementById("result").classList.remove("show");
+ document.getElementById("recognized").textContent="";
+ document.getElementById("score").textContent="0%";
+ document.getElementById("progress").style.width="0%";
+}
+
+function nextQuestion(){
+ index++;
+ updateQuestion();
+}
+
+function updateStats(){
+ document.getElementById("total").textContent=attempts.length;
+
+ const average=attempts.length?
+ Math.round(attempts.reduce((a,b)=>a+b,0)/attempts.length):0;
+
+ document.getElementById("average").textContent=average+"%";
+ document.getElementById("best").textContent=best+"%";
+}
+
+function renderLists(){
+ const all=Object.values(exercises).flat();
+
+ document.getElementById("wordList").innerHTML=
+ all.filter(x=>x.type==="WORD").map(x=>`
+  <div class="word-item">
+   <div class="word-left">
+    <div class="word-picture">${x.emoji}</div>
+    <div class="word-info">
+     <strong>${escapeHTML(x.text)}</strong>
+     <small>${escapeHTML(x.meaning)}</small>
+     <small>${escapeHTML(x.ipa)}</small>
+    </div>
+   </div>
+   <button onclick="speak(${JSON.stringify(x.text)})">🔊 듣기</button>
+  </div>
+ `).join("");
+
+ document.getElementById("sentenceList").innerHTML=
+ all.filter(x=>x.type==="SENTENCE").map(x=>`
+  <div class="word-item" style="display:block">
+   <div class="sentence-picture">${x.emoji}</div>
+   <div class="word-info">
+    <strong>${escapeHTML(x.text)}</strong>
+    <small>${escapeHTML(x.meaning)}</small>
+   </div>
+   <button style="margin-top:10px"
+    onclick="speak(${JSON.stringify(x.text)})">🔊 문장 듣기</button>
+  </div>
+ `).join("");
+}
+
+renderLists();
+updateQuestion();
+</script>
+</body>
+</html>
